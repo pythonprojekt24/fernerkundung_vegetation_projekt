@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 
 # Höhenraster 
 in_grid = r"data\dgm\DGM_EU.tif" # müssen wir dann so nennen und vermutlich auf keinen Fall committen, sondern nur lokal ausführen!
+# Idee wäre, dass wir hier das DGM von USGS importieren (Vorsicht, große Daten, nicht committen!), leider funktioniert es bei mirr aber leider damit noch nicht
 
 # Pixel in numpy-array umwandeln
 # dataset
