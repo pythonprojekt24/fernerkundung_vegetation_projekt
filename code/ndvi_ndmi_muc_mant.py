@@ -6,9 +6,6 @@ import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
-
 # UTM-Koordinaten der Punkte
 points = [(690828.96,5334366.44), (640676.06,5001890.22)] # München - Mantova
 
@@ -33,6 +30,7 @@ line_gdf.to_file(r'data\shp\line_muc_mant.shp')
 nir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Raw).tiff'
 swir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Raw).tiff'
 red_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Raw).tiff'  # Band 4 für NDVI
+
 
 # Definieren des gewünschten Ausschnitts
 # Geben Sie die Grenzen in den UTM-Koordinaten an (xmin, ymin, xmax, ymax)
