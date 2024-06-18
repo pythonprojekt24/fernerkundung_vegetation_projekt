@@ -33,8 +33,6 @@ nir_band_path = r'data\sentinel-2\Sentinel-2_L2A_B08_(Raw).tiff'
 swir_band_path = r'data\sentinel-2\Sentinel-2_L2A_B11_(Raw).tiff'
 red_band_path = r'data\sentinel-2\Sentinel-2_L2A_B04_(Raw).tiff'  # Band 4 für NDVI
 
-
-
 # Einlesen der Bänder
 with rasterio.open(nir_band_path) as nir_band, \
      rasterio.open(red_band_path) as red_band, \
