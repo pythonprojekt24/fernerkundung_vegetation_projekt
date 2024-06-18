@@ -181,9 +181,8 @@ ax2.plot(x_values, dem_values, label='DEM Höhe', color='r')
 ax2.set_ylabel('DEM Höhe (m)')
 ax2.legend(loc='upper right')
 
-plt.title('NDVI, NDMI und DEM entlang des Transekts München - Verona (500 Punkte)')
+plt.title('NDVI, NDMI und DEM entlang des Transekts München - Mantova (500 Punkte)')
 plt.show()
 
 print('done.')
-
 
