@@ -1,5 +1,6 @@
 # To Do: shapefiles in die Raster plotten, Höhenwerte hinzufügen
 # EPSG wichtig! EPSG:32632
+# DGM hat EPSG 25832 --> bis 1 m Genauigkeit ok
 
 import rasterio
 import numpy as np
