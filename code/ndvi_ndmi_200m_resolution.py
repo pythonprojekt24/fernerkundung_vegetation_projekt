@@ -1,3 +1,4 @@
+#Dieser shit geht nicht
 import rasterio
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,33 +6,31 @@ from shapely.geometry import Point, LineString
 import geopandas as gpd
 from rasterio.enums import Resampling
 
-# Funktion zur Neuabtastung der Sentinel-2 Bänder
-def resample_band(src_path, target_resolution):
-    with rasterio.open(src_path) as src:
-        # Ziel-Auflösung in Pixeln berechnen
-        transform = src.transform
-        new_width = int(src.width * transform.a / target_resolution)
-        new_height = int(src.height * -transform.e / target_resolution)
+# Funktion zur Neuabtastung eines Bands auf eine bestimmte Pixelgröße
+def resample_band(band_path, new_resolution):
+    with rasterio.open(band_path) as src:
+        transform, width, height = rasterio._warp._calculate_default_transform(
+            src.crs, src.crs, src.width, src.height, *src.bounds, resolution=new_resolution)
+        
+        kwargs = src.meta.copy()
+        kwargs.update({
+            'crs': src.crs,
+            'transform': transform,
+            'width': width,
+            'height': height
+        })
 
-        # Abtasten (Resampling) des Bands
         data = src.read(
-            out_shape=(src.count, new_height, new_width),
+            out_shape=(src.count, height, width),
             resampling=Resampling.bilinear
         )
-
-        # Aktualisieren der Transformationsinformationen für die neue Auflösung
-        transform = src.transform * src.transform.scale(
-            (src.width / data.shape[-1]),
-            (src.height / data.shape[-2])
-        )
-
-        return data, transform, src.crs
+    return data, transform, src.crs
 
 # UTM-Koordinaten der Punkte
-points = [(644748.85, 5083772.51), (500900.42, 5300334.10)]  # Bodensee (Konstanz?) bis Riva
+points = [(644748.85, 5083772.51), (500900.42, 5300334.10)] # Bodensee (Konstanz?) bis Riva
 
 # UTM-Zoneninformationen für UTM 32N
-utm_crs = {'init': 'epsg:32632'}
+utm_crs = 'EPSG:32632'
 
 # Punkte als GeoDataFrame erstellen
 points_gdf = gpd.GeoDataFrame(geometry=[Point(x, y) for x, y in points], crs=utm_crs)
@@ -74,26 +73,27 @@ fig.colorbar(ndmi_plot, ax=ax2)
 
 plt.show()
 
-print('Step 1 done')
-
 # Funktion zum Speichern als Raster
 def save_raster(output_path, data, transform, crs):
     profile = {
         'driver': 'GTiff',
         'dtype': rasterio.float32,
-        'count': 1,
-        'height': data.shape[1],
+        'nodata': np.nan,
         'width': data.shape[2],
+        'height': data.shape[1],
+        'count': 1,
         'crs': crs,
         'transform': transform
     }
-
     with rasterio.open(output_path, 'w', **profile) as dst:
-        dst.write(data.astype(rasterio.float32))
+        dst.write(data.astype(rasterio.float32), 1)
 
 # Speichern als Raster mit 200m Auflösung
 save_raster(r'data\exported_tif\ndvi_200m.tif', NDVI, transform, crs)
 save_raster(r'data\exported_tif\ndmi_200m.tif', NDMI, transform, crs)
+
+print('NDVI und NDMI mit 200m Auflösung gespeichert')
+
 
 print('NDVI und NDMI mit 200m Auflösung gespeichert')
 
