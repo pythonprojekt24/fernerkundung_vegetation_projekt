@@ -4,7 +4,7 @@ import pyproj
 from osgeo import gdal
 
 # Öffnen Sie die GeoTIFF-Datei
-dataset = gdal.Open('Pfad/Zu/Ihrer/Datei.tif', gdal.GA_ReadOnly)
+dataset = gdal.Open(r"path/to/merged_dem.tif", gdal.GA_ReadOnly)
 
 # Überprüfen Sie das Koordinatenreferenzsystem (CRS)
 projInfo = dataset.GetProjection()
@@ -55,3 +55,5 @@ if __name__ == "__main__":
     dst_crs = pyproj.CRS.from_epsg(32632)
     
     reproject_geotiff(src_tiff, dst_tiff, dst_crs)
+
+print("done")
