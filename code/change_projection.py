@@ -1,6 +1,18 @@
 import rasterio
 from rasterio.warp import calculate_default_transform, reproject, Resampling
 import pyproj
+from osgeo import gdal
+
+# Öffnen Sie die GeoTIFF-Datei
+dataset = gdal.Open('Pfad/Zu/Ihrer/Datei.tif', gdal.GA_ReadOnly)
+
+# Überprüfen Sie das Koordinatenreferenzsystem (CRS)
+projInfo = dataset.GetProjection()
+
+# ProjInfo gibt die Projektionsinformationen als Text zurück
+print("Projektion:", projInfo)
+
+################## projection ändern #######################
 
 def reproject_geotiff(src_path, dst_path, dst_crs):
     with rasterio.open(src_path) as src:
