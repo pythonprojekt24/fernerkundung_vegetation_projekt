@@ -1,3 +1,5 @@
+# einfügen von Geländemodell durch die google earth engine, funktioniert noch nicht aber hoffentlich bald
+
 import ee
 import geemap
 import webbrowser
