@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from shapely.geometry import Point, LineString
 import geopandas as gpd
+from rasterio.enums import Resampling
 
 
 # UTM-Koordinaten der Punkte
@@ -33,7 +34,7 @@ nir_band_path = r'data\sentinel-2\Sentinel-2_L2A_B08_(Raw).tiff'
 swir_band_path = r'data\sentinel-2\Sentinel-2_L2A_B11_(Raw).tiff'
 red_band_path = r'data\sentinel-2\Sentinel-2_L2A_B04_(Raw).tiff'  # Band 4 für NDVI
 
-# Einlesen der Bänder
+#alt# Einlesen der Bänder
 with rasterio.open(nir_band_path) as nir_band, \
      rasterio.open(red_band_path) as red_band, \
      rasterio.open(swir_band_path) as swir_band:
@@ -48,7 +49,7 @@ with rasterio.open(nir_band_path) as nir_band, \
     # Extrahiere Transformationsinformationen
     transform = nir_band.transform
 
-# Berechnung von NDVI und NDMI für das Plot
+#alt# Berechnung von NDVI und NDMI für das Plot
 NDVI = (nir - red) / (nir + red)
 NDMI = (nir - swir) / (nir + swir)
 
@@ -67,7 +68,7 @@ plt.show()
 
 print ('step 1 done')
 
-# Speichern als Raster
+#alt# Speichern als Raster
 def save_raster(output_path, data, reference_band_path):
     with rasterio.open(reference_band_path) as ref:
         profile = ref.profile
@@ -78,6 +79,8 @@ def save_raster(output_path, data, reference_band_path):
 
 save_raster(r'data\exported_tif\ndvi_scaled_cropped.tif', NDVI, nir_band_path)
 save_raster(r'data\exported_tif\ndmi_scaled_cropped.tif', NDMI, nir_band_path)
+
+print('NDVI und NDMI ')
 
 # Berechnung von NDVI und NDMI entlang der Linie
 ndvi_values = []
