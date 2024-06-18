@@ -5,6 +5,7 @@ from shapely.geometry import box, Point, LineString
 import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import pearsonr, spearmanr
 
 # UTM-Koordinaten der Punkte
 points = [(690828.96,5334366.44), (640676.06,5001890.22)] # München - Mantova
@@ -63,7 +64,6 @@ red_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Cropped).tiff'
 swir_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Cropped).tiff'
 dem_path_cropped = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\cropped_resampled_merged_dem_utm.tif"
 
-
 # Zuschneiden und Speichern der Rasterdateien
 crop_and_save_raster(nir_band_path, nir_band_cropped_path, geo)
 crop_and_save_raster(red_band_path, red_band_cropped_path, geo)
@@ -96,6 +96,7 @@ with rasterio.open(nir_band_cropped_path) as nir_band, \
     red = red_band.read(1).astype(np.float32) / 65535.0
     swir = swir_band.read(1).astype(np.float32) / 65535.0
     dem = dem_band.read(1).astype(np.float32)  # DGM Daten einlesen
+    dem_nodata = -32767.0  # Nodata Wert für DEM
 
     crs = nir_band.crs
     transform = nir_band.transform
@@ -127,47 +128,36 @@ ndmi_values = []
 dem_values = []
 x_values = []
 
-# Interpolieren entlang der Linie
-for distance in np.linspace(0, line.length, 500):
+for distance in np.linspace(0, line.length, 100):
     point = line.interpolate(distance)
     col, row = ~transform * (point.x, point.y)
-    # ndvi = (nir[int(row), int(col)] - red[int(row), int(col)]) / (nir[int(row), int(col)] + red[int(row), int(col)])
-    # ndmi = (nir[int(row), int(col)] - swir[int(row), int(col)]) / (nir[int(row), int(col)] + swir[int(row), int(col)])
-    # dem_value = dem[int(row), int(col)]  # DEM Werte extrahieren
-    # ndvi_values.append(ndvi)
-    # ndmi_values.append(ndmi)
-    # dem_values.append(dem_value)
-    # x_values.append(distance)
-    # Handle index out of range for col, row
+
     if (0 <= int(row) < nir.shape[0]) and (0 <= int(col) < nir.shape[1]):
         ndvi = (nir[int(row), int(col)] - red[int(row), int(col)]) / (nir[int(row), int(col)] + red[int(row), int(col)])
         ndmi = (nir[int(row), int(col)] - swir[int(row), int(col)]) / (nir[int(row), int(col)] + swir[int(row), int(col)])
-        dem_value = dem[int(row), int(col)]  # DEM Werte extrahieren
-        ndvi_values.append(ndvi)
-        ndmi_values.append(ndmi)
-        dem_values.append(dem_value)
-        x_values.append(distance)
+        dem_value = dem[int(row), int(col)]
+
+        # Filtern von NA-Werten
+        if dem_value != dem_nodata:
+            ndvi_values.append(ndvi)
+            ndmi_values.append(ndmi)
+            dem_values.append(dem_value)
+            x_values.append(distance)
+        else:
+            # Hier werden keine Werte hinzugefügt, nur die Lücke in der Linie markiert
+            pass
     else:
-        ndvi_values.append(np.nan)
-        ndmi_values.append(np.nan)
-        dem_values.append(np.nan)
-        x_values.append(distance)
+        #Lücke hinzufügen
+        pass
 
-# # Plotten der NDVI und NDMI entlang der Linie
-# plt.figure(figsize=(10, 6))
-# plt.plot(x_values, ndvi_values, label='NDVI')
-# plt.plot(x_values, ndmi_values, label='NDMI')
-# plt.plot(x_values, dem_values, label='DEM Höhe')
-# plt.xlabel('Distanz Muc - Ver (m)')
-# plt.ylabel('Werte')
-# plt.title('NDVI und NDMI und DEM entlang des Transekts München - Verona (500 Punkte)')
-# plt.legend()
-# plt.grid(True)
-# plt.show()
+# Berechnung der Korrelationskoeffizienten
+pearson_corr_ndvi_dem, _ = pearsonr(ndvi_values, dem_values)
+spearman_corr_ndvi_dem, _ = spearmanr(ndvi_values, dem_values)
 
-# Plotten der NDVI, NDMI und DEM entlang der Linie
+# Plotten von NDVI, NDMI und DEM entlang der Linie
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
+# Plot für NDVI und NDMI
 ax1.plot(x_values, ndvi_values, label='NDVI', color='g')
 ax1.plot(x_values, ndmi_values, label='NDMI', color='b')
 ax1.set_xlabel('Distanz Muc - Ver (m)')
@@ -181,8 +171,36 @@ ax2.plot(x_values, dem_values, label='DEM Höhe', color='r')
 ax2.set_ylabel('DEM Höhe (m)')
 ax2.legend(loc='upper right')
 
-plt.title('NDVI, NDMI und DEM entlang des Transekts München - Mantova (500 Punkte)')
+plt.title('Linienplot NDVI, NDMI und DEM entlang des Transekts München - Mantova (100 Punkte)')
+plt.show()
+
+print('Linienplot done.')
+
+# Plotten der NDVI, NDMI und DEM Punkte entlang der Linie
+fig, ax1 = plt.subplots(figsize=(10, 6))
+
+# Scatter Plot für NDVI und NDMI
+ax1.scatter(x_values, ndvi_values, label='NDVI', color='g', marker='o')
+ax1.scatter(x_values, ndmi_values, label='NDMI', color='b', marker='o')
+ax1.set_xlabel('Distanz Muc - Ver (m)')
+ax1.set_ylabel('NDVI und NDMI Werte')
+ax1.legend(loc='upper left')
+ax1.grid(True)
+
+# Zweite y-Achse für DEM
+ax2 = ax1.twinx()
+ax2.scatter(x_values, dem_values, label='DEM Höhe', color='r', marker='o')
+ax2.set_ylabel('DEM Höhe (m)')
+ax2.legend(loc='upper right')
+
+# Anzeige der Korrelationskoeffizienten im Plot
+plt.text(0.5, 0.95, f'Pearson Korrelation NVMI-DEM: {pearson_corr_ndvi_dem:.2f}', ha='center', va='center', transform=ax1.transAxes, fontsize=10)
+plt.text(0.5, 0.90, f'Spearman Korrelation NVMI-DEM: {spearman_corr_ndvi_dem:.2f}', ha='center', va='center', transform=ax1.transAxes, fontsize=10)
+
+
+plt.title('NDVI, NDMI und DEM Punkte entlang des Transekts München - Mantova (100 Punkte)')
 plt.show()
 
 print('done.')
 
+# To do: Wie viele Prozent der NDVI werte sind in welchen Höhenklassen?
