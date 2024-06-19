@@ -195,8 +195,8 @@ ax2.set_ylabel('DEM Höhe (m)')
 ax2.legend(loc='upper right')
 
 # Anzeige der Korrelationskoeffizienten im Plot
-plt.text(0.5, 0.95, f'Pearson Korrelation NVMI-DEM: {pearson_corr_ndvi_dem:.2f}', ha='center', va='center', transform=ax1.transAxes, fontsize=10)
-plt.text(0.5, 0.90, f'Spearman Korrelation NVMI-DEM: {spearman_corr_ndvi_dem:.2f}', ha='center', va='center', transform=ax1.transAxes, fontsize=10)
+plt.text(0.5, 0.95, f'Pearson Korrelation NDVI-DEM: {pearson_corr_ndvi_dem:.2f}', ha='center', va='center', transform=ax1.transAxes, fontsize=10)
+plt.text(0.5, 0.90, f'Spearman Korrelation NDVI-DEM: {spearman_corr_ndvi_dem:.2f}', ha='center', va='center', transform=ax1.transAxes, fontsize=10)
 
 
 plt.title('NDVI, NDMI und DEM Punkte entlang des Transekts München - Mantova (100 Punkte)')
