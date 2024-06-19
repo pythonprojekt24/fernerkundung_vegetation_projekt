@@ -73,7 +73,7 @@ crop_and_save_raster(dem_path, dem_path_cropped, geo)
 print('Zuschneiden abgeschlossen.')
 
 # UTM-Koordinaten der Punkte (München, Mantova Koordinaten)
-points = [(690828.96, 5334366.44), (640676.06, 5001890.22)] 
+# points = [(690828.96, 5334366.44), (640676.06, 5001890.22)] 
 # LineString Objekt aus den Punkten erstellen
 line = LineString(points)
 
@@ -128,7 +128,8 @@ ndmi_values = []
 dem_values = []
 x_values = []
 
-for distance in np.linspace(0, line.length, 100):
+# to do: punkte checken
+for distance in np.linspace(0, line.length, 2000):
     point = line.interpolate(distance)
     col, row = ~transform * (point.x, point.y)
 
@@ -203,4 +204,11 @@ plt.show()
 
 print('done.')
 
-# To do: Wie viele Prozent der NDVI werte sind in welchen Höhenklassen?
+# To do: Wie viele Prozent der NDVI werte sind in welchen Höhenklassen? --> hypsographische kurve ... boxplot  --> also wie sind die NDVI und NDMI auf gewisse Höhenstufen 
+# verteilt?
+# Die Linie bzw. Punkte checken wo die Werte interpoliert werden ... ist das wircklich die richtige Methode? 
+# # to do: punkte checken
+# for distance in np.linspace(startpunkt x Koordinate, endpunkt x Koordinate, 2000): --> und das gleiche auf mit y Anfang und x Ende
+#     point = line.interpolate(distance)
+#     col, row = ~transform * (point.x, point.y)
+
