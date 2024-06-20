@@ -1,3 +1,4 @@
+# download von datei von google drive
 # das skript funktioniert
 # dafür habe ich auf meiner google cloud ein dienstkonto gmacht damit ich nicht komploziert mit anwender konfuguration authethfizierung brauche
 # ich habe bei google drive außerdem sicher gestellt, dass mein dienstkonto zugriff auf die datein im ordner EarthEngineImage hat
