@@ -10,17 +10,17 @@ from osgeo import gdal
 
 # 1. Projektion erfragen#######################################################################################
 # Öffnen Sie die GeoTIFF-Datei
-dataset = gdal.Open(r'data\sentinel-2\Sentinel-2_L2A_B08_(Raw).tiff', gdal.GA_ReadOnly)
+dataset = gdal.Open(r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\middle_europe.tif", gdal.GA_ReadOnly)
 
 # Überprüfen Sie das Koordinatenreferenzsystem (CRS)
 projInfo = dataset.GetProjection()
 
 # ProjInfo gibt die Projektionsinformationen als Text zurück
-print("Projektion sentinel:", projInfo)
+print("Projektion dgm:", projInfo)
 
 #2. Auflösung eines Rasters erfragen ##########################################################################
 # Pfad zur umgewandelten GeoTIFF-Datei (UTM 32N)
-dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\merged_dem_utm.tif"
+dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\middle_europe.tif"
 
 # Öffnen der GeoTIFF-Datei
 with rasterio.open(dem_path) as src:
@@ -29,15 +29,15 @@ with rasterio.open(dem_path) as src:
     width = src.width 
     height = src.height
     # Drucken Sie die Auflösung und Dimensionen
-    print(f"Auflösung: {resolution[0]} x {resolution[1]} Meter pro Pixel")
+    print(f"Auflösung dgm: {resolution[0]} x {resolution[1]} Meter pro Pixel")
     print(f"Breite: {width} Pixel")
     print(f"Höhe: {height} Pixel")
 
 
-dem_path = r'data\sentinel-2\Sentinel-2_L2A_B08_(Raw).tiff'
+satellite_path = r'data\sentinel-2\Sentinel-2_L2A_B08_(Raw).tiff'
 
 # Öffnen der GeoTIFF-Datei
-with rasterio.open(dem_path) as src:
+with rasterio.open(satellite_path) as src:
     # Lesen der Auflösung aus dem GeoTIFF
     resolution = src.res  # Tuple (x_resolution, y_resolution)
     width = src.width 
