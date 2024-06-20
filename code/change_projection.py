@@ -8,44 +8,44 @@ from rasterio.warp import calculate_default_transform, reproject, Resampling
 import pyproj
 from osgeo import gdal
 
-# 1. Projektion erfragen#######################################################################################
-# Öffnen Sie die GeoTIFF-Datei
-dataset = gdal.Open(r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\middle_europe.tif", gdal.GA_ReadOnly)
+# # 1. Projektion erfragen#######################################################################################
+# # Öffnen Sie die GeoTIFF-Datei
+# dataset = gdal.Open(r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\middle_europe.tif", gdal.GA_ReadOnly) #pfad eingeben
 
-# Überprüfen Sie das Koordinatenreferenzsystem (CRS)
-projInfo = dataset.GetProjection()
+# # Überprüfen Sie das Koordinatenreferenzsystem (CRS)
+# projInfo = dataset.GetProjection()
 
-# ProjInfo gibt die Projektionsinformationen als Text zurück
-print("Projektion dgm:", projInfo)
+# # ProjInfo gibt die Projektionsinformationen als Text zurück
+# print("Projektion dgm:", projInfo)
 
-#2. Auflösung eines Rasters erfragen ##########################################################################
-# Pfad zur umgewandelten GeoTIFF-Datei (UTM 32N)
-dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\middle_europe.tif"
+# #2. Auflösung eines Rasters erfragen ##########################################################################
+# # Pfad zur umgewandelten GeoTIFF-Datei (UTM 32N)
+# dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\middle_europe.tif" #pfad eingeben
 
-# Öffnen der GeoTIFF-Datei
-with rasterio.open(dem_path) as src:
-    # Lesen der Auflösung aus dem GeoTIFF
-    resolution = src.res  # Tuple (x_resolution, y_resolution)
-    width = src.width 
-    height = src.height
-    # Drucken Sie die Auflösung und Dimensionen
-    print(f"Auflösung dgm: {resolution[0]} x {resolution[1]} Meter oder Grad (je nach Projektion)")
-    print(f"Breite: {width} Pixel")
-    print(f"Höhe: {height} Pixel")
+# # Öffnen der GeoTIFF-Datei
+# with rasterio.open(dem_path) as src:
+#     # Lesen der Auflösung aus dem GeoTIFF
+#     resolution = src.res  # Tuple (x_resolution, y_resolution)
+#     width = src.width 
+#     height = src.height
+#     # Drucken Sie die Auflösung und Dimensionen
+#     print(f"Auflösung dgm: {resolution[0]} x {resolution[1]} Meter oder Grad (je nach Projektion)")
+#     print(f"Breite: {width} Pixel")
+#     print(f"Höhe: {height} Pixel")
 
 
-satellite_path = r'data\sentinel-2\Sentinel-2_L2A_B08_(Raw).tiff'
+# satellite_path = r'data\sentinel-2\Sentinel-2_L2A_B08_(Raw).tiff' #pfad eingeben
 
-# Öffnen der GeoTIFF-Datei
-with rasterio.open(satellite_path) as src:
-    # Lesen der Auflösung aus dem GeoTIFF
-    resolution = src.res  # Tuple (x_resolution, y_resolution)
-    width = src.width 
-    height = src.height
-    # Drucken Sie die Auflösung und Dimensionen
-    print(f"Auflösung der sentinel: {resolution[0]} x {resolution[1]} Meter pro Pixel")
-    print(f"Breite: {width} Pixel")
-    print(f"Höhe: {height} Pixel")
+# # Öffnen der GeoTIFF-Datei
+# with rasterio.open(satellite_path) as src:
+#     # Lesen der Auflösung aus dem GeoTIFF
+#     resolution = src.res  # Tuple (x_resolution, y_resolution)
+#     width = src.width 
+#     height = src.height
+#     # Drucken Sie die Auflösung und Dimensionen
+#     print(f"Auflösung der sentinel: {resolution[0]} x {resolution[1]} Meter pro Pixel")
+#     print(f"Breite: {width} Pixel")
+#     print(f"Höhe: {height} Pixel")
 
 
 #3. projection ändern ###########################################################################################
@@ -93,3 +93,40 @@ with rasterio.open(satellite_path) as src:
 #     reproject_geotiff(src_tiff, dst_tiff, dst_crs)
 
 print("done")
+
+# 3.1. Projektion ändern  ########################################################################################################################
+# Dateipfade
+input_tiff = r'C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\middle_europe.tif'  # Pfad zur Eingabe-TIFF-Datei (WGS84)
+output_tiff = r'C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\utm_middle_europe.tif'  # Pfad zur Ausgabe-TIFF-Datei (UTM 32N)
+
+# Definition der Projektionssysteme
+src_crs = 'EPSG:4326'  # WGS84 Koordinatenreferenzsystem
+dst_crs = 'EPSG:32632'  # UTM Zone 32N Koordinatenreferenzsystem
+
+# Öffnen des Eingabe-TIFFs
+with rasterio.open(input_tiff) as src:
+    # Umwandlung von WGS84 nach UTM 32N
+    transform, width, height = calculate_default_transform(src.crs, dst_crs, src.width, src.height, *src.bounds)
+    kwargs = src.meta.copy()
+    kwargs.update({
+        'crs': dst_crs,
+        'transform': transform,
+        'width': width,
+        'height': height
+    })
+
+    # Erstellen und Schreiben des Ausgabe-TIFFs
+    with rasterio.open(output_tiff, 'w', **kwargs) as dst:
+        for i in range(1, src.count + 1):
+            reproject(
+                source=rasterio.band(src, i),
+                destination=rasterio.band(dst, i),
+                src_transform=src.transform,
+                src_crs=src.crs,
+                dst_transform=transform,
+                dst_crs=dst_crs,
+                resampling=Resampling.nearest
+            )
+
+print(f"GeoTIFF wurde erfolgreich nach UTM Zone 32N umgewandelt und unter {output_tiff} gespeichert.")
+
