@@ -16,18 +16,18 @@ elevation = dataset.select('elevation')
 # Calculate the slope.
 slope = ee.Terrain.slope(elevation)
 
-# Define the region of interest (ROI) for Europe.
-europe_roi = ee.Geometry.Polygon([
-    [[-31.266, 34.5], [44.561, 34.5], [44.561, 71.2], [-31.266, 71.2], [-31.266, 34.5]]
-])
+# Define the region of interest (ROI) using approximate WGS84 coordinates
+min_lon, min_lat = 6.21, 51.28
+max_lon, max_lat = 7.26, 54.16
+roi = ee.Geometry.Rectangle([min_lon, min_lat, max_lon, max_lat])
 
 # Set export parameters
 export_task = ee.batch.Export.image.toDrive(
     image=elevation,
     description='Europe_Slope',
     folder='EarthEngineImages',
-    fileNamePrefix='elevation_europe',
-    region=europe_roi,
+    fileNamePrefix='elevation_smalleurope',
+    region=roi,
     scale=1000,  # Adjust the scale as needed
     crs='EPSG:4326',
     maxPixels=1e13
