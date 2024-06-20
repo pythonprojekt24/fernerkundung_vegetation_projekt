@@ -29,7 +29,7 @@ with rasterio.open(dem_path) as src:
     width = src.width 
     height = src.height
     # Drucken Sie die Auflösung und Dimensionen
-    print(f"Auflösung dgm: {resolution[0]} x {resolution[1]} Meter pro Pixel")
+    print(f"Auflösung dgm: {resolution[0]} x {resolution[1]} Meter oder Grad (je nach Projektion)")
     print(f"Breite: {width} Pixel")
     print(f"Höhe: {height} Pixel")
 
