@@ -6,9 +6,28 @@ import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import pearsonr, spearmanr
+import argparse
+
+#### PARSER ########################################################################
+## python ndvi_ndmi_mit_dem_muc_mantova.py -x_start 690828.96 -y_start 5334366.44 -x_end 640676.06 -y_end 5001890.22
+# z.B. Muc - IbK: python ndvi_ndmi_mit_dem_muc_mantova.py -x_start 690828.96 -y_start 5334366.44 -x_end 681849.02 -y_end 5237884.63
+# Argumentenparser erstellen
+parser = argparse.ArgumentParser(description="In diesem Skript können Koordinaten von zwei Orten angegeben werden, die zwischen München und Mantova liegen, um für diese NDVI und NDMI zu berechnen.")
+
+# Argumente definieren
+parser.add_argument('-x_start', type=float, default=690828.96, help='position of x-coordinate at the starting point')
+parser.add_argument('-y_start', type=float, default=5334366.44, help='position of y-coordinate at the starting point')
+parser.add_argument('-x_end', type=float, default=640676.06, help='position of x-coordinate at the ending point')
+parser.add_argument('-y_end', type=float, default=5001890.22, help='position of y-coordinate at the ending point')
+
+# Argumente parsen
+args = parser.parse_args() # oben definiert Argumente werden an Variable args übergeben
+####################################################################################################
 
 # UTM-Koordinaten der Punkte
-points = [(690828.96,5334366.44), (640676.06,5001890.22)] # München - Mantova
+# points = [(690828.96,5334366.44), (640676.06,5001890.22)] # München - Mantova
+points =[(args.x_start,args.y_start),(args.x_end, args.y_end)] # entweder diese Zeile verwenden für Parser oder die darüber für Muc-Mant
+
 
 # UTM-Zoneninformationen für UTM 32N
 # utm_crs = {'init': 'epsg:32632'}
@@ -24,13 +43,13 @@ line = LineString(points)
 line_gdf = gpd.GeoDataFrame(geometry=[line], crs=utm_crs)
 
 # Speichern der Shapefiles
-points_gdf.to_file(r'data\shp\points_muc_mant.shp')
-line_gdf.to_file(r'data\shp\line_muc_mant.shp')
+points_gdf.to_file(r'..\data\shp\points_muc_mant.shp')
+line_gdf.to_file(r'..\data\shp\line_muc_mant.shp')
 
 # Dateipfade der Sentinel-2 Bänder und dem
-nir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Raw).tiff'
-swir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Raw).tiff'
-red_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Raw).tiff'  # Band 4 für NDVI
+nir_band_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B08_(Raw).tiff'
+swir_band_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B11_(Raw).tiff'
+red_band_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B04_(Raw).tiff' 
 dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\resampled_merged_dem_utm.tif"
 
 
@@ -59,9 +78,9 @@ def crop_and_save_raster(input_path, output_path, geo):
             dest.write(out_image)
 
 # Dateipfade der originalen und zugeschnittenen Raster
-nir_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Cropped).tiff'
-red_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Cropped).tiff'
-swir_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Cropped).tiff'
+nir_band_cropped_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B08_(Cropped).tiff'
+red_band_cropped_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B04_(Cropped).tiff'
+swir_band_cropped_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B11_(Cropped).tiff'
 dem_path_cropped = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\cropped_resampled_merged_dem_utm.tif"
 
 # Zuschneiden und Speichern der Rasterdateien
@@ -119,8 +138,8 @@ fig.colorbar(ndmi_plot, ax=ax2)
 plt.show()
 
 # Speichern der berechneten NDVI und NDMI Raster
-save_raster(r'data\exported_tif\ndvi_scaled_cropped.tif', NDVI, nir_band_cropped_path)
-save_raster(r'data\exported_tif\ndmi_scaled_cropped.tif', NDMI, nir_band_cropped_path)
+save_raster(r'..\data\exported_tif\ndvi_scaled_cropped.tif', NDVI, nir_band_cropped_path)
+save_raster(r'..\data\exported_tif\ndmi_scaled_cropped.tif', NDMI, nir_band_cropped_path)
 
 # Berechnung von NDVI und NDMI entlang der Linie
 ndvi_values = []
