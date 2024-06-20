@@ -16,10 +16,13 @@ elevation = dataset.select('elevation')
 # Calculate the slope.
 slope = ee.Terrain.slope(elevation)
 
-# Define the region of interest (ROI) using approximate WGS84 coordinates
-min_lon, min_lat = 6.21, 51.28
-max_lon, max_lat = 7.26, 54.16
-roi = ee.Geometry.Rectangle([min_lon, min_lat, max_lon, max_lat])
+# Define the region of interest (ROI) using WGS84 coordinates
+# WGS84 Koordinaten für Ulm und Ravenna
+ulm_lon, ulm_lat = 9.9876, 48.4011
+ravenna_lon, ravenna_lat = 12.2037, 44.4183
+
+# Erstellen eines EE Geometry Rectangle Objekts
+roi = ee.Geometry.Rectangle([ulm_lon, ravenna_lat, ravenna_lon, ulm_lat])
 
 # Set export parameters
 export_task = ee.batch.Export.image.toDrive(

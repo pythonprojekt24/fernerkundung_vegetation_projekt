@@ -15,11 +15,11 @@ import os
 service_account_file = r"C:\Users\jomas\YourUsername\ee_mascherjo_driveschluessel.json"
 
 # ID der Datei auf Google Drive, die heruntergeladen werden soll
-file_id = '1Qy_eUpNKZ_HXXvewvmDq40EZ4RjCCcbF'
+file_id = '17yagjyvC05ViLuwWjjCPU5plhnYRM91J' 
 
 # Zielordner und Dateiname für den Download
 download_directory = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM"
-file_name = 'elevation_smalleurope.tif'
+file_name = 'middle_europe.tif'
 
 # Erstellen Sie eine Authentifizierungsinstanz für das Servicekonto
 credentials = service_account.Credentials.from_service_account_file(
