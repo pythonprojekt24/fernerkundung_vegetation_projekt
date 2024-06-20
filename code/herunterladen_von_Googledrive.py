@@ -1,23 +1,46 @@
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
+# das skript funktioniert
+# dafür habe ich auf meiner google cloud ein dienstkonto gmacht damit ich nicht komploziert mit anwender konfuguration authethfizierung brauche
+# ich habe bei google drive außerdem sicher gestellt, dass mein dienstkonto zugriff auf die datein im ordner EarthEngineImage hat
+# wichtig ist auch noch vom dienstkonto eine schlüssel .json file mit den zugriff informationen herunterzuladen
+# die file_id von der Datei kann man nachschauen auf google drive (der link den die datei hat)
+
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
+import io
 import os
 
-# Authenticate and create the PyDrive client.
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()  # This will open a web browser for authentication.
-drive = GoogleDrive(gauth)
+# Pfad zur JSON-Schlüssel-Datei Ihres Servicekontos
+service_account_file = r"C:\Users\jomas\YourUsername\ee_mascherjo_driveschluessel.json"
 
-# Replace with the folder ID or name in your Google Drive
-folder_name = 'EarthEngineImages'
-file_name = 'elevation_europe.tif'  # Change to the name of your exported file
+# ID der Datei auf Google Drive, die heruntergeladen werden soll
+file_id = '1Qy_eUpNKZ_HXXvewvmDq40EZ4RjCCcbF'
 
-# Search for the file in the specified folder
-file_list = drive.ListFile({'q': f"title contains '{file_name}' and '{folder_name}' in parents"}).GetList()
+# Zielordner und Dateiname für den Download
+download_directory = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM"
+file_name = 'elevation_smalleurope.tif'
 
-if file_list:
-    file = file_list[0]
-    print(f"Downloading {file['title']} from Google Drive...")
-    file.GetContentFile(file['title'])
-    print(f"Downloaded {file['title']} to {os.path.abspath(file['title'])}")
-else:
-    print(f"No file named {file_name} found in folder {folder_name}")
+# Erstellen Sie eine Authentifizierungsinstanz für das Servicekonto
+credentials = service_account.Credentials.from_service_account_file(
+    service_account_file,
+    scopes=['https://www.googleapis.com/auth/drive']  # Hier wird 'drive' verwendet, nicht 'drive.readonly'
+)
+
+# Erstellen Sie eine Drive-API-Instanz
+drive_service = build('drive', 'v3', credentials=credentials)
+
+# Herunterladen der Datei von Google Drive
+request = drive_service.files().get_media(fileId=file_id)
+fh = io.FileIO(os.path.join(download_directory, file_name), mode='wb')
+downloader = MediaIoBaseDownload(fh, request)
+
+# Führen Sie den Download durch und speichern Sie die Datei lokal
+done = False
+while not done:
+    status, done = downloader.next_chunk()
+    print(f"Download {int(status.progress() * 100)}%.")
+
+# print(f"Download abgeschlossen. Die Datei wurde unter {download_directory + '\\' + file_name} gespeichert.")
+
+download_path = os.path.join(download_directory, file_name)
+print(f"Download abgeschlossen. Die Datei wurde unter {download_path} gespeichert.")
