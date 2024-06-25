@@ -18,7 +18,8 @@ service_account_file = r"C:\Users\jomas\YourUsername\ee_mascherjo_driveschluesse
 file_id = '17yagjyvC05ViLuwWjjCPU5plhnYRM91J' 
 
 # Zielordner und Dateiname für den Download
-download_directory = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM"
+download_directory = r"..\data\SRTM"
+#download_directory = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM"
 file_name = 'middle_europe.tif'
 
 # Erstellen Sie eine Authentifizierungsinstanz für das Servicekonto

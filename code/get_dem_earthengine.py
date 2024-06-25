@@ -40,3 +40,7 @@ export_task = ee.batch.Export.image.toDrive(
 export_task.start()
 
 print("Exporting GeoTIFF... Check the GEE tasks in your GEE Console to monitor the export process.")
+
+
+# nun können die Daten mithilfe des Skripts get_data_from googledrive.py heruntergeladen werden.
+print("Nun können die Daten mithilfe des Skripts get_data_from googledrive.py heruntergeladen werden")
