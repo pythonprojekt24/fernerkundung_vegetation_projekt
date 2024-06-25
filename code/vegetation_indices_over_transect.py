@@ -47,10 +47,10 @@ points_gdf.to_file(r'..\data\shp\points_muc_mant.shp')
 line_gdf.to_file(r'..\data\shp\line_muc_mant.shp')
 
 # Dateipfade der Sentinel-2 Bänder und dem
-nir_band_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B08_(Raw).tiff'
-swir_band_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B11_(Raw).tiff'
-red_band_path = r'..\data\sentinel-2\59_Sentinel-2_L2A_B04_(Raw).tiff' 
-dem_path = r"..\data\SRTM\resampled_merged_dem_utm.tif"
+nir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Raw).tiff'
+swir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Raw).tiff'
+red_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Raw).tiff' 
+dem_path = r"data\SRTM\resampled_merged_dem_utm.tif"
 # dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\resampled_merged_dem_utm.tif"
 
 
