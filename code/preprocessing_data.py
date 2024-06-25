@@ -1,8 +1,7 @@
 # In diesem Skript kann man diverse Informationen über Rasterdateien herausfinden. Einfach das auskommentieren das man nicht braucht und laufen lassen
 # 1. Projektion des Rasters erfragen
 # 2. Auflösung des Rasters erfagen
-# 3. Bei Bedarf Projektion ändern
-    # 3.1. auch projektion ändern, fast das gleiche
+# 3. auch projektion ändern, fast das gleiche
 # 4. Aufllösung verändern - resampling
 
 import rasterio
