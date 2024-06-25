@@ -91,8 +91,8 @@ line_gdf.to_file(r'data\shp\line_muc_mant.shp')
 nir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Raw).tiff'
 swir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Raw).tiff'
 red_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Raw).tiff' 
-dem_path = r"data\SRTM\resampled_merged_dem_utm.tif"
-# dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\resampled_merged_dem_utm.tif"
+#dem_path = r"data\SRTM\resampled_merged_dem_utm.tif"
+dem_path = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\resampled_merged_dem_utm.tif"
 
 
 # Definieren des gewünschten Ausschnitts
@@ -123,8 +123,8 @@ def crop_and_save_raster(input_path, output_path, geo):
 nir_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Cropped).tiff'
 red_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Cropped).tiff'
 swir_band_cropped_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Cropped).tiff'
-dem_path_cropped = r"data\SRTM\cropped_resampled_merged_dem_utm.tif"
-#dem_path_cropped = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\cropped_resampled_merged_dem_utm.tif"
+#dem_path_cropped = r"data\SRTM\cropped_resampled_merged_dem_utm.tif"
+dem_path_cropped = r"C:\Users\jomas\Documents\Uni\Master_Semester_4\pythonaut\Projekt_neu\SRTM\cropped_resampled_merged_dem_utm.tif"
 
 # Zuschneiden und Speichern der Rasterdateien
 crop_and_save_raster(nir_band_path, nir_band_cropped_path, geo)
@@ -192,10 +192,11 @@ line_gdf = gpd.read_file(shapefile_path)
 line = line_gdf.geometry.iloc[0]
 
 # Pfad zum DGM und den zusätzlichen Rasterdateien (z.B. NDVI, NDMI)
-dem_path = r"data\SRTM\cropped_resampled_merged_dem_utm.tif"
-nir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Raw).tiff'
-red_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Raw).tiff'
-swir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Raw).tiff'
+# dem_path = r"data\SRTM\cropped_resampled_merged_dem_utm.tif"
+dem_path = dem_path_cropped
+nir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B08_(Cropped).tiff'
+red_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B04_(Cropped).tiff'
+swir_band_path = r'data\sentinel-2\59_Sentinel-2_L2A_B11_(Cropped).tiff'
 
 # Laden des DGM
 with rasterio.open(dem_path) as dem_band:
